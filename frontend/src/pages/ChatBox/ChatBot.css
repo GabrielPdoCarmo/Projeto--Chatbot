@@ -1,0 +1,255 @@
+/* =========================================
+   PÁGINA DO CHATBOT
+========================================= */
+
+.chatbot-page {
+  width: 100%;
+  max-width: 760px;
+  margin: 50px auto;
+  padding: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+
+/* =========================================
+   CABEÇALHO
+========================================= */
+
+.chatbot-page .chatbot-header {
+  padding: 28px 32px 24px;
+  text-align: center;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.chatbot-page .chatbot-header h1 {
+  margin: 0 0 8px;
+  font-size: 27px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.chatbot-page .chatbot-header span {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+
+/* =========================================
+   SEÇÃO DO PROBLEMA
+========================================= */
+
+.chatbot-page .problem-section {
+  padding: 26px 32px 10px;
+}
+
+.chatbot-page .problem-section h2 {
+  margin: 0 0 12px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.chatbot-page .problem-card {
+  padding: 18px 20px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.chatbot-page .problem-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+
+/* =========================================
+   SEÇÃO DO ASSISTENTE
+========================================= */
+
+.chatbot-page .chat-section {
+  padding: 26px 32px 32px;
+}
+
+.chatbot-page .chat-section h2 {
+  margin: 0 0 14px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #111827;
+}
+
+
+/* =========================================
+   MENSAGENS
+========================================= */
+
+.chatbot-page .chat-messages {
+  min-height: 120px;
+  max-height: 350px;
+  padding: 18px;
+  margin-bottom: 16px;
+
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  overflow-y: auto;
+}
+
+.chatbot-page .message {
+  max-width: 85%;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+
+.chatbot-page .message.assistant {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
+}
+
+.chatbot-page .message strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #2563eb;
+}
+
+.chatbot-page .message p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+
+/* =========================================
+   CAMPO DE PERGUNTA
+========================================= */
+
+.chatbot-page .chat-input-area {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.chatbot-page .chat-input-area input {
+  flex: 1;
+  width: auto;
+  margin: 0;
+
+  padding: 13px 15px;
+
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+
+  color: #111827;
+  font-size: 15px;
+
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.chatbot-page .chat-input-area input::placeholder {
+  color: #9ca3af;
+}
+
+.chatbot-page .chat-input-area input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================
+   BOTÃO ENVIAR
+========================================= */
+
+.chatbot-page .chat-input-area button {
+  width: auto;
+  margin: 0;
+
+  padding: 13px 22px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 9px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.chatbot-page .chat-input-area button:hover {
+  background: #1d4ed8;
+}
+
+.chatbot-page .chat-input-area button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================
+   BARRA DE ROLAGEM
+========================================= */
+
+.chatbot-page .chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatbot-page .chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatbot-page .chat-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .chatbot-page {
+    width: calc(100% - 24px);
+    margin: 20px auto;
+    border-radius: 12px;
+  }
+
+  .chatbot-page .chatbot-header {
+    padding: 24px 20px;
+  }
+
+  .chatbot-page .chatbot-header h1 {
+    font-size: 22px;
+  }
+
+  .chatbot-page .problem-section,
+  .chatbot-page .chat-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .chatbot-page .chat-input-area {
+    flex-direction: column;
+  }
+
+  .chatbot-page .chat-input-area input,
+  .chatbot-page .chat-input-area button {
+    width: 100%;
+  }
+}

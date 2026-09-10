@@ -1,0 +1,111 @@
+/* =========================================
+   PÁGINA DE INSTRUÇÕES
+========================================= */
+
+.instrucoes-page {
+  width: 100%;
+  max-width: 760px;
+  margin: 70px auto;
+  padding: 42px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================
+   TÍTULO
+========================================= */
+
+.instrucoes-page h1 {
+  margin: 0 0 28px;
+  font-size: 30px;
+  font-weight: 700;
+  text-align: center;
+  color: #111827;
+}
+
+
+/* =========================================
+   TEXTOS
+========================================= */
+
+.instrucoes-page p {
+  margin: 0 0 18px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #374151;
+}
+
+
+/* =========================================
+   ÁREA DO BOTÃO
+========================================= */
+
+.instrucoes-button-container {
+  margin-top: 32px;
+  text-align: center;
+}
+
+
+/* =========================================
+   BOTÃO
+========================================= */
+
+.instrucoes-button {
+  width: auto;
+  min-width: 220px;
+  margin: 0;
+  padding: 14px 28px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 9px;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
+}
+
+.instrucoes-button:hover {
+  background: #1d4ed8;
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.25);
+}
+
+.instrucoes-button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 600px) {
+  .instrucoes-page {
+    width: calc(100% - 24px);
+    margin: 25px auto;
+    padding: 28px 22px;
+    border-radius: 12px;
+  }
+
+  .instrucoes-page h1 {
+    font-size: 25px;
+  }
+
+  .instrucoes-page p {
+    font-size: 15px;
+  }
+
+  .instrucoes-button {
+    width: 100%;
+  }
+}
