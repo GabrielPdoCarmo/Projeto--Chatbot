@@ -2,8 +2,10 @@ import "./Instrucoes.css";
 
 function Instrucoes({
   onContinuar,
+  carregando = false,
 }: {
   onContinuar: () => void;
+  carregando?: boolean;
 }) {
   return (
     <main className="instrucoes-page">
@@ -28,8 +30,9 @@ function Instrucoes({
           type="button"
           className="instrucoes-button"
           onClick={onContinuar}
+          disabled={carregando}
         >
-          Começar experimento
+          {carregando ? "Carregando..." : "Começar experimento"}
         </button>
       </div>
     </main>

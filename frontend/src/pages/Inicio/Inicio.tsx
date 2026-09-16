@@ -2,9 +2,10 @@ import "./Inicio.css";
 
 type InicioProps = {
   onIniciar: () => void;
+  carregando?: boolean;
 };
 
-function Inicio({ onIniciar }: InicioProps) {
+function Inicio({ onIniciar, carregando = false }: InicioProps) {
   return (
     <main className="inicio-page">
       <h1>
@@ -35,8 +36,9 @@ function Inicio({ onIniciar }: InicioProps) {
           type="button"
           className="inicio-button"
           onClick={onIniciar}
+          disabled={carregando}
         >
-          Iniciar experimento
+          {carregando ? "Carregando..." : "Iniciar experimento"}
         </button>
       </div>
     </main>

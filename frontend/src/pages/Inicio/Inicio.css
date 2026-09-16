@@ -94,6 +94,12 @@
   transform: translateY(1px);
 }
 
+.inicio-page .inicio-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 
 /* =========================================
    RESPONSIVIDADE

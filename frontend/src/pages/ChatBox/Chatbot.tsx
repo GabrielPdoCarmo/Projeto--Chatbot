@@ -1,64 +1,66 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { getSocket } from "../../lib/socket";
+import type { SessaoDTO } from "../../lib/api";
 import "./ChatBot.css";
 
 type Mensagem = {
-  id: number;
-  tipo: "user" | "assistant";
+  id: string;
+  origem: "participante" | "wizard";
   texto: string;
+  timestamp: string;
 };
 
-function Chatbot() {
-  const [mensagem, setMensagem] = useState("");
+type ChatbotProps = {
+  sessao: SessaoDTO;
+};
 
-  const [mensagens, setMensagens] = useState<Mensagem[]>([
-    {
-      id: 1,
-      tipo: "assistant",
-      texto:
-        "Olá! Sou o assistente de programação. Descreva o problema que você precisa resolver e posso ajudar você a analisá-lo.",
-    },
-  ]);
+function Chatbot({ sessao }: ChatbotProps) {
+  const [mensagem, setMensagem] = useState("");
+  const [mensagens, setMensagens] = useState<Mensagem[]>([]);
+  const mensagensRef = useRef<HTMLDivElement>(null);
+
+  // Conecta na sala da sessão e escuta as mensagens que chegam
+  // (tanto o eco da própria mensagem quanto a resposta do Wizard).
+  useEffect(() => {
+    const socket = getSocket();
+
+    socket.emit("entrar_sessao", {
+      sessaoId: sessao.id,
+      papel: "participante",
+    });
+
+    const aoReceberMensagem = (msg: Mensagem) => {
+      setMensagens((anteriores) => [...anteriores, msg]);
+    };
+
+    socket.on("nova_mensagem", aoReceberMensagem);
+
+    return () => {
+      socket.off("nova_mensagem", aoReceberMensagem);
+    };
+  }, [sessao.id]);
+
+  // Rola para a última mensagem sempre que a lista muda.
+  useEffect(() => {
+    mensagensRef.current?.scrollTo({
+      top: mensagensRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [mensagens]);
 
   const enviarMensagem = () => {
     const texto = mensagem.trim();
+    if (!texto) return;
 
-    if (!texto) {
-      return;
-    }
-
-    const novaMensagem: Mensagem = {
-      id: Date.now(),
-      tipo: "user",
-      texto,
-    };
-
-    setMensagens((mensagensAnteriores) => [
-      ...mensagensAnteriores,
-      novaMensagem,
-    ]);
-
+    getSocket().emit("mensagem_participante", { sessaoId: sessao.id, texto });
     setMensagem("");
-
-    // Resposta temporária do assistente
-    setTimeout(() => {
-      const resposta: Mensagem = {
-        id: Date.now() + 1,
-        tipo: "assistant",
-        texto:
-          "Entendi. Vou analisar o problema que você apresentou. Podemos trabalhar na resolução passo a passo. O que você gostaria de verificar primeiro?",
-      };
-
-      setMensagens((mensagensAnteriores) => [
-        ...mensagensAnteriores,
-        resposta,
-      ]);
-    }, 600);
   };
 
-  const pressionarEnter = (
-    evento: React.KeyboardEvent<HTMLInputElement>
+  const pressionarTecla = (
+    evento: React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
-    if (evento.key === "Enter") {
+    if (evento.key === "Enter" && !evento.shiftKey) {
+      evento.preventDefault();
       enviarMensagem();
     }
   };
@@ -71,32 +73,37 @@ function Chatbot() {
       </header>
 
       <section className="chat-section">
-        <div className="chat-messages">
+        <div className="chat-messages" ref={mensagensRef}>
+          <div className="message assistant">
+            <strong>Assistente</strong>
+            <p>
+              Olá! Sou seu assistente de programação. Pode colar seu código
+              ou descrever sua dúvida que eu te ajudo a resolver.
+            </p>
+          </div>
+
           {mensagens.map((item) => (
             <div
               key={item.id}
-              className={`message ${item.tipo}`}
+              className={`message ${
+                item.origem === "wizard" ? "assistant" : "user"
+              }`}
             >
               <strong>
-                {item.tipo === "assistant"
-                  ? "Assistente"
-                  : "Você"}
+                {item.origem === "wizard" ? "Assistente" : "Você"}
               </strong>
-
               <p>{item.texto}</p>
             </div>
           ))}
         </div>
 
         <div className="chat-input-area">
-          <input
-            type="text"
+          <textarea
             value={mensagem}
-            onChange={(evento) =>
-              setMensagem(evento.target.value)
-            }
-            onKeyDown={pressionarEnter}
-            placeholder="Descreva o problema ou digite sua pergunta..."
+            onChange={(evento) => setMensagem(evento.target.value)}
+            onKeyDown={pressionarTecla}
+            placeholder="Cole seu código ou descreva o que já tentou... (Shift+Enter para quebrar linha)"
+            rows={3}
           />
 
           <button

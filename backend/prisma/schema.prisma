@@ -1,0 +1,54 @@
+// Schema de dados do experimento.
+// Não existe mais um banco de problemas pré-cadastrado: o aluno traz sua
+// própria dúvida/problema livremente. O que o pesquisador controla agora
+// é a CONDIÇÃO da sessão — o "roteiro" de comportamento que o Wizard deve
+// seguir na conversa, independente do que o aluno perguntar.
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Um voluntário do experimento.
+model Participante {
+  id       String   @id @default(uuid())
+  // Grupo experimental do participante, se o desenho for entre-sujeitos.
+  grupo    String   @default("unico")
+  criadoEm DateTime @default(now())
+  sessoes  Sessao[]
+}
+
+// Uma sessão = uma conversa de um participante com o assistente,
+// em um canal específico (web ou whatsapp), sob uma condição experimental.
+model Sessao {
+  id             String    @id @default(uuid())
+  participante   Participante @relation(fields: [participanteId], references: [id])
+  participanteId String
+  // "web" | "whatsapp"
+  canal          String
+  // "erro_sutil" | "correto" | "erro_obvio" — como o Wizard deve se
+  // comportar nessa sessão, decidido no momento da criação da sessão
+  // (ver sessaoService.ts), não amarrado a um problema específico.
+  condicao       String
+  iniciadaEm     DateTime  @default(now())
+  finalizadaEm   DateTime?
+  mensagens      Mensagem[]
+}
+
+// Cada mensagem trocada, com timestamp — é a partir daqui que dá para
+// calcular tempo de resposta, tempo até a primeira dúvida, etc.
+// O texto do participante é o próprio "problema" que ele traz — não tem
+// mais um campo de enunciado pré-definido em lugar nenhum.
+model Mensagem {
+  id        String   @id @default(uuid())
+  sessao    Sessao   @relation(fields: [sessaoId], references: [id])
+  sessaoId  String
+  // "participante" | "wizard"
+  origem    String
+  texto     String
+  timestamp DateTime @default(now())
+}
