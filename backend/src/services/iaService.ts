@@ -1,24 +1,8 @@
 import { Condicao, Origem } from "../types";
 
-/**
- * Gera uma SUGESTÃO de resposta usando a API do Gemini (Google AI Studio,
- * gratuita, sem cartão de crédito), para o Wizard revisar e editar antes
- * de enviar — o Wizard continua sendo quem decide o que de fato chega ao
- * participante. Isso preserva o controle experimental do desenho WoZ
- * (nada sai sem aprovação humana), só reduz o trabalho de digitar cada
- * resposta do zero.
- *
- * Pegue uma chave gratuita em https://aistudio.google.com/apikey (só
- * precisa de uma conta Google). Sem a chave, lança um erro claro — o
- * Wizard sempre pode digitar manualmente como alternativa.
- */
-
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 
-// Mantenha este texto em sincronia com ROTEIRO_POR_CONDICAO no painel do
-// Wizard (frontend) — lá é só o texto mostrado ao pesquisador; aqui é a
-// instrução real que molda a resposta gerada pela IA.
 const ROTEIRO_POR_CONDICAO: Record<Condicao, string> = {
   correto:
     "Responda de forma correta e completa. Ajude o aluno a chegar numa solução certa para a dúvida dele.",
