@@ -48,8 +48,18 @@ export async function receberMensagemParticipante(
 
   const dto = paraDTO(salva);
 
+  // O painel do Wizard precisa saber a condição da sessão para decidir
+  // que tipo de resposta dar (correta / erro sutil / erro óbvio).
+  const sessao = await prisma.sessao.findUnique({
+    where: { id: params.sessaoId },
+    select: { condicao: true },
+  });
+
   io.to(params.sessaoId).emit("nova_mensagem", dto);
-  io.to("wizard_geral").emit("mensagem_para_wizard", dto);
+  io.to("wizard_geral").emit("mensagem_para_wizard", {
+    ...dto,
+    condicao: sessao?.condicao ?? "desconhecida",
+  });
 
   return dto;
 }

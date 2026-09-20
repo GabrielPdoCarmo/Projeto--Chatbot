@@ -2,6 +2,7 @@ import { useState } from "react";
 import Inicio from "./pages/Inicio/Inicio";
 import Instrucoes from "./pages/Instrucoes/Instrucoes";
 import Chatbot from "./pages/ChatBox/Chatbot";
+import PainelWizard from "./pages/Wizard/PainelWizard";
 import { criarParticipante, criarSessao } from "./lib/api";
 import type { SessaoDTO } from "./lib/api";
 import "./App.css";
@@ -52,6 +53,13 @@ function App() {
       setCarregando(false);
     }
   };
+
+  // Desvio simples por URL: acessando /wizard, abre o painel do
+  // pesquisador em vez do fluxo do participante. Quando o projeto
+  // crescer, vale trocar isso por react-router.
+  if (window.location.pathname.startsWith("/wizard")) {
+    return <PainelWizard />;
+  }
 
   if (erro) {
     return (

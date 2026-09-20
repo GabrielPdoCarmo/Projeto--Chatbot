@@ -25,7 +25,16 @@ const io = new SocketIOServer(httpServer, {
   cors: { origin: process.env.CORS_ORIGIN ?? "*" },
 });
 
+/**
+ * Eventos de socket — este é o canal "web" hoje. Quando o WhatsApp entrar
+ * na jogada, ele NÃO vai usar socket: um webhook HTTP vai chamar
+ * receberMensagemParticipante/enviarRespostaWizard diretamente. O painel
+ * do Wizard nem percebe a diferença, porque ele só escuta a sala
+ * "wizard_geral" e as salas por sessaoId.
+ */
 io.on("connection", (socket) => {
+  // O cliente entra na "sala" da sua sessão (participante no chat web)
+  // ou na sala geral do wizard (painel do pesquisador).
   socket.on("entrar_sessao", (payload: { sessaoId?: string; papel: "participante" | "wizard" }) => {
     if (payload.papel === "wizard") {
       socket.join("wizard_geral");
