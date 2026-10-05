@@ -6,10 +6,7 @@ import { Server as SocketIOServer } from "socket.io";
 
 import { participantesRouter } from "./routes/participantes";
 import { sessoesRouter } from "./routes/sessoes";
-import {
-  receberMensagemParticipante,
-  enviarRespostaWizard,
-} from "./services/mensagemService";
+import { receberMensagemParticipante } from "./services/mensagemService";
 
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN ?? "*" }));
@@ -28,17 +25,13 @@ const io = new SocketIOServer(httpServer, {
 /**
  * Eventos de socket — este é o canal "web" hoje. Quando o WhatsApp entrar
  * na jogada, ele NÃO vai usar socket: um webhook HTTP vai chamar
- * receberMensagemParticipante/enviarRespostaWizard diretamente. O painel
- * do Wizard nem percebe a diferença, porque ele só escuta a sala
- * "wizard_geral" e as salas por sessaoId.
+ * receberMensagemParticipante diretamente, que já cuida de gerar a
+ * resposta automática da IA e emitir de volta.
  */
 io.on("connection", (socket) => {
-  // O cliente entra na "sala" da sua sessão (participante no chat web)
-  // ou na sala geral do wizard (painel do pesquisador).
-  socket.on("entrar_sessao", (payload: { sessaoId?: string; papel: "participante" | "wizard" }) => {
-    if (payload.papel === "wizard") {
-      socket.join("wizard_geral");
-    }
+  // O cliente entra na "sala" da sua sessão pra receber as mensagens
+  // daquela conversa em tempo real.
+  socket.on("entrar_sessao", (payload: { sessaoId: string }) => {
     if (payload.sessaoId) {
       socket.join(payload.sessaoId);
     }
@@ -51,17 +44,6 @@ io.on("connection", (socket) => {
         await receberMensagemParticipante(io, payload);
       } catch (erro) {
         console.error("Erro ao processar mensagem do participante:", erro);
-      }
-    }
-  );
-
-  socket.on(
-    "resposta_wizard",
-    async (payload: { sessaoId: string; texto: string }) => {
-      try {
-        await enviarRespostaWizard(io, payload);
-      } catch (erro) {
-        console.error("Erro ao processar resposta do wizard:", erro);
       }
     }
   );

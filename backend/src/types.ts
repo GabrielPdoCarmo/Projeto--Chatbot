@@ -1,15 +1,13 @@
 export type Canal = "web" | "whatsapp";
-export type Origem = "participante" | "wizard";
+export type Origem = "participante" | "ia";
 export type Condicao = "erro_sutil" | "correto" | "erro_obvio";
+export type Personalidade = "formal" | "amigavel" | "confiante";
+
+// Lista usada para sortear a personalidade de cada sessão.
+export const PERSONALIDADES: Personalidade[] = ["formal", "amigavel", "confiante"];
 
 // Payload que o participante manda ao digitar uma mensagem.
 export type MensagemParticipanteInput = {
-  sessaoId: string;
-  texto: string;
-};
-
-// Payload que o Wizard manda ao responder.
-export type RespostaWizardInput = {
   sessaoId: string;
   texto: string;
 };
