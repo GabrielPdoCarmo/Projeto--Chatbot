@@ -1,6 +1,6 @@
 import { Server as SocketIOServer } from "socket.io";
 import { prisma } from "../db";
-import { MensagemDTO, Condicao } from "../types";
+import { MensagemDTO, Condicao, Personalidade } from "../types";
 import { gerarSugestaoResposta } from "./iaService";
 
 /**
@@ -72,8 +72,12 @@ export async function receberMensagemParticipante(
 
   const sessao = await prisma.sessao.findUnique({
     where: { id: params.sessaoId },
-    select: { condicao: true },
+    select: { condicao: true, personalidade: true },
   });
+
+  if (!sessao || !["correto", "erro_sutil", "erro_obvio"].includes(sessao.condicao)) {
+    throw new Error("Sessão inexistente ou com condição experimental inválida.");
+  }
 
   const historico = await prisma.mensagem.findMany({
     where: { sessaoId: params.sessaoId },
@@ -82,7 +86,8 @@ export async function receberMensagemParticipante(
 
   try {
     const textoResposta = await gerarSugestaoResposta({
-      condicao: (sessao?.condicao as Condicao) ?? "correto",
+      condicao: sessao.condicao as Condicao,
+      personalidade: sessao.personalidade as Personalidade,
       historico: historico.map((m) => ({
         origem: m.origem as "participante" | "ia",
         texto: m.texto,
@@ -104,11 +109,11 @@ export async function receberMensagemParticipante(
     });
   } catch (erro) {
     console.error("Erro ao gerar resposta automática:", erro);
-    await salvarMensagem(io, {
+    // Falhas na geração/validação não devem contaminar o conjunto de respostas
+    // experimentais como se fossem mensagens legítimas da IA.
+    io.to(params.sessaoId).emit("assistente_erro", {
       sessaoId: params.sessaoId,
-      texto:
-        "Desculpe, tive um problema técnico ao gerar a resposta. Tente novamente em instantes.",
-      origem: "ia",
+      mensagem: "Não foi possível gerar a resposta desta vez. Tente novamente.",
     });
   }
 }

@@ -19,6 +19,7 @@ function Chatbot({ sessao }: ChatbotProps) {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [aguardandoResposta, setAguardandoResposta] = useState(false);
   const [textoParcial, setTextoParcial] = useState("");
+  const [erroResposta, setErroResposta] = useState("");
   const mensagensRef = useRef<HTMLDivElement>(null);
 
   // Conecta na sala da sessão e escuta as mensagens que chegam
@@ -42,17 +43,26 @@ function Chatbot({ sessao }: ChatbotProps) {
     };
 
     const aoAssistenteDigitando = () => {
+      setErroResposta("");
       setAguardandoResposta(true);
+    };
+
+    const aoErroResposta = (dados: { mensagem: string }) => {
+      setAguardandoResposta(false);
+      setTextoParcial("");
+      setErroResposta(dados.mensagem);
     };
 
     socket.on("nova_mensagem", aoReceberMensagem);
     socket.on("assistente_digitando", aoAssistenteDigitando);
     socket.on("assistente_trecho", aoReceberTrecho);
+    socket.on("assistente_erro", aoErroResposta);
 
     return () => {
       socket.off("nova_mensagem", aoReceberMensagem);
       socket.off("assistente_digitando", aoAssistenteDigitando);
       socket.off("assistente_trecho", aoReceberTrecho);
+      socket.off("assistente_erro", aoErroResposta);
     };
   }, [sessao.id]);
 
@@ -63,12 +73,13 @@ function Chatbot({ sessao }: ChatbotProps) {
       top: mensagensRef.current.scrollHeight,
       behavior: textoParcial ? "auto" : "smooth",
     });
-  }, [mensagens, aguardandoResposta, textoParcial]);
+  }, [mensagens, aguardandoResposta, textoParcial, erroResposta]);
 
   const enviarMensagem = () => {
     const texto = mensagem.trim();
     if (!texto || aguardandoResposta) return;
 
+    setErroResposta("");
     getSocket().emit("mensagem_participante", { sessaoId: sessao.id, texto });
     setMensagem("");
   };
@@ -111,6 +122,13 @@ function Chatbot({ sessao }: ChatbotProps) {
                 <p>{item.texto}</p>
               </div>
             ))}
+
+            {erroResposta && (
+              <div className="message assistant" role="alert">
+                <strong>Aviso</strong>
+                <p>{erroResposta}</p>
+              </div>
+            )}
 
             {aguardandoResposta && textoParcial && (
               <div className="message assistant">

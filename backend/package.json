@@ -9,7 +9,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev --name init"
+    "prisma:migrate": "prisma migrate dev --name init",
+    "test": "npm run build && node --test tests/iaService.test.js"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",

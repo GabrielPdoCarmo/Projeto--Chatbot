@@ -11,6 +11,16 @@ const CONDICOES: Condicao[] = ["correto", "erro_sutil", "erro_obvio"];
  * depender do desenho definido com o CEP.
  */
 function sortearCondicao(): Condicao {
+  const forcar = process.env.FORCAR_CONDICAO;
+
+  if (forcar) {
+    if (!CONDICOES.includes(forcar as Condicao)) {
+      throw new Error(`Condição inválida no .env: ${forcar}`);
+    }
+
+    return forcar as Condicao;
+  }
+
   const indice = Math.floor(Math.random() * CONDICOES.length);
   return CONDICOES[indice];
 }
