@@ -1,8 +1,9 @@
 // Schema de dados do experimento.
 // Não existe mais um banco de problemas pré-cadastrado: o aluno traz sua
 // própria dúvida/problema livremente. O que o pesquisador controla agora
-// é a CONDIÇÃO da sessão — o "roteiro" de comportamento que o Wizard deve
-// seguir na conversa, independente do que o aluno perguntar.
+// é a CONDIÇÃO da sessão — o "roteiro" de comportamento que a IA deve
+// seguir na conversa, independente do que o aluno perguntar — e a
+// PERSONALIDADE da IA.
 
 datasource db {
   provider = "sqlite"
@@ -30,10 +31,13 @@ model Sessao {
   participanteId String
   // "web" | "whatsapp"
   canal          String
-  // "erro_sutil" | "correto" | "erro_obvio" — como o Wizard deve se
+  // "erro_sutil" | "correto" | "erro_obvio" — como a IA deve se
   // comportar nessa sessão, decidido no momento da criação da sessão
   // (ver sessaoService.ts), não amarrado a um problema específico.
   condicao       String
+  // "formal" | "amigavel" | "confiante" — personalidade da IA nessa
+  // sessão, sorteada na criação da sessão (ver sorteioService.ts).
+  personalidade  String    @default("formal")
   iniciadaEm     DateTime  @default(now())
   finalizadaEm   DateTime?
   mensagens      Mensagem[]
@@ -47,7 +51,7 @@ model Mensagem {
   id        String   @id @default(uuid())
   sessao    Sessao   @relation(fields: [sessaoId], references: [id])
   sessaoId  String
-  // "participante" | "wizard"
+  // "participante" | "ia"
   origem    String
   texto     String
   timestamp DateTime @default(now())

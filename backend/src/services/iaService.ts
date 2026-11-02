@@ -15,7 +15,7 @@ import { Condicao, Origem, Personalidade } from "../types";
 const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://127.0.0.1:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "qwen2.5-coder:7b";
 // Limite de segurança do tamanho da resposta (em tokens). Mantém o tempo de espera baixo.
-const OLLAMA_MAX_TOKENS = Number(process.env.OLLAMA_MAX_TOKENS ?? 900);
+const OLLAMA_MAX_TOKENS = Number(process.env.OLLAMA_MAX_TOKENS ?? 1800);
 
 const ROTEIRO_POR_CONDICAO: Record<Condicao, string> = {
   correto:

@@ -25,8 +25,9 @@ export async function criarParticipante(grupo: string = "unico") {
 
 /**
  * Abre uma nova sessão para o participante, no canal informado, já com
- * uma condição experimental sorteada. Não depende de nenhum problema
- * pré-cadastrado — o aluno traz sua própria dúvida na conversa.
+ * uma condição experimental sorteada. Não
+ * depende de nenhum problema pré-cadastrado — o aluno traz sua própria
+ * dúvida na conversa.
  */
 export async function criarSessao(params: {
   participanteId: string;
